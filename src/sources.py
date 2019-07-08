@@ -15,10 +15,15 @@ class fobject:
         self.bt = np.rot90(np.array(self.bt), 1, spin).tolist()
 
     def draw_obj(self, game):
+        ret = False
         for i in range(len(self.bt)):
             for j in range(len(self.bt[0])):
+                if game.game_map[self.pos[1] + len(self.bt)][self.pos[0]+j] and self.bt[i][j]:
+                    ret = True
                 if self.bt[i][j]:
                     game.game_map[self.pos[1]+i][self.pos[0]+j] = float(self.bt[i][j])
+        return ret
+
 
 class game:
     def __init__(self, game_size=[0, 0], block_size = 1):
@@ -42,11 +47,11 @@ class game:
 
     def clear_block(self):
 
-        self.game_map = np.rot90(np.asarray((self.game_map), np.uint8)).tolist()
+        self.game_map = np.rot90(np.array((self.game_map), np.uint8)).tolist()
         for i in range(len(self.game_map[0])-1):
             t = len(self.game_map[0]) - 2 - i
             for j in range(len(self.game_map)):
                 if not self.game_map[j][t]:
-                    self.game_map[j][:t] = np.zeros(len(self.game_map[j][:t])).tolist()
+                    self.game_map[j][:t] = [0 for i in range(len(self.game_map[j][:t]))]
 
-        self.game_map = np.rot90(np.asarray((self.game_map), np.uint8), 1, (1, 0)).tolist()
+        self.game_map = np.rot90(np.array((self.game_map), np.uint8), 1, (1, 0)).tolist()

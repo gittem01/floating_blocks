@@ -14,7 +14,8 @@ while (True):
     #if frame % 240 == 0:
     #    fob.pos[1] += 1
     print("Frame :", frame, end="\r")
-    fob.draw_obj(the_game)
+    if fob.draw_obj(the_game):
+        fob = fobject("src/data/block2.csv", pos=[0, 0])
     key = cv2.waitKey(1)
 
     if key == ord("a"):
