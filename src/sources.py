@@ -3,12 +3,13 @@ import numpy as np
 import cv2
 import time
 import bios
+import os
 from copy import deepcopy
 
 windowName = 'Drawing'
 
 class fobject:
-    def __init__(self, bt, color = 255, pos = [1, 1]):
+    def __init__(self, bt, color = 255, pos = [0, 0]):
         self.bt = bios.read(bt)
         self.pos = pos
         self.color = color
@@ -36,6 +37,16 @@ class fobject:
     def move_control(self, game, key):
 
         if key == ord("w"):
+            rotated = np.rot90(np.array(self.bt), 1, (0, 1)).tolist()
+
+            for i in range(len(rotated)):
+                for j in range(len(rotated[0])):
+                    if int(rotated[i][j]) >= 1:
+                        try:
+                            if game.game_map[self.pos[1] + i][self.pos[0] + j]:
+                                return
+                        except IndexError:
+                            return
             self.rotate()
 
         elif key == ord("s"):
@@ -50,7 +61,7 @@ class fobject:
                             if game.game_map[self.pos[1] + i][self.pos[0] + j - 1]:
                                 return
                         except IndexError:
-                            continue
+                            return
 
             if self.pos[0] > 0:
                 self.pos[0] += -1
@@ -94,3 +105,9 @@ class game:
     def draw_block(self, pos, opt=1, color = 255):
         bs = self.block_size
         self.img[pos[0]*bs+1:pos[0]*bs+bs-1, pos[1]*bs+1:pos[1]*bs + bs-1] = color
+
+    def line_clear(self):
+        for i in range(len(self.game_map)-1):
+            if 0 not in self.game_map[i]:
+                self.game_map.pop(i)
+                self.game_map.insert(0, [0 for i in range(len(self.game_map[0]))])
