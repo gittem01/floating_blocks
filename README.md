@@ -1,7 +1,7 @@
 Required modules :
 
-1 - cv2
+- cv2
 
-2 - numpy
+- numpy
 
-3 - bios
+- bios
