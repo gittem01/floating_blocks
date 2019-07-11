@@ -1,29 +1,47 @@
 from src.sources import *
 
-def event_func(event, x, y, flags, param):
-    pass
-
-cv2.namedWindow(windowName)
-
-the_game = game([27, 24], 25)
-fob = fobject("src/data/block{}.csv".format(random.randrange(1, 8)))
+the_game = game([20, 12], 30)
+fob = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[the_game.game_size[1]//2, 0])
+next = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[the_game.game_size[1]//2, 0])
 
 frame = 0
+
 while (True):
 
-    key = cv2.waitKey(1)
     frame += 1
-    if frame % 120 == 0 :
-        fob.pos[1] += 1
-    print("Frame :", frame, end="\r")
+    #print("Frame :", frame, end="\r")
+
+    key = cv2.waitKey(1)
+
     the_game.show_map = deepcopy(the_game.game_map)
     fob.draw_obj(the_game)
+    next.draw_next(the_game)
+
     if fob.check_block(the_game):
+        if key == ord("s") or frame %240 == 0:
 
-        the_game.game_map = the_game.show_map[:]
-        fob = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[0, 0])
+            the_game.game_map = the_game.show_map[:]
+            the_game.line_clear()
+            fob = next
+            if fob.check_block(the_game):
+                x = 0
+                while True:
+                    key = cv2.waitKey(1)
+                    if key == ord("q"):
+                        break
+                    x += 1
+                    the_game.img[:, :, :] = 0
+                    cv2.putText(the_game.img,'Game',(10,300), cv2.FONT_HERSHEY_SIMPLEX, 4,
+                                (x % 256,128 + x % 128,0),2,cv2.LINE_AA)
+                    cv2.putText(the_game.img,'Over',(40,500), cv2.FONT_HERSHEY_SIMPLEX, 4,
+                                (x % 256,128 + x % 128,0),2,cv2.LINE_AA)
+                    cv2.imshow(windowName, the_game.img)
+            next = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[the_game.game_size[1]//2, 0])
 
-    the_game.line_clear()
+
+    else:
+        if frame % 120 == 0 and key != ord("s"):
+            fob.pos[1] += 1
     fob.move_control(the_game, key)
     the_game.draw_game()
     cv2.imshow(windowName, the_game.img)
