@@ -6,4 +6,6 @@ Required modules :
 
 - bios
 
+- simpleaudio
+
 ![](blockGif.gif)

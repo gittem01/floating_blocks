@@ -1,8 +1,10 @@
 from src.sources import *
+import simpleaudio as aud
 
 the_game = game([25, 12], 24)
 fob = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[the_game.game_size[1]//2, 0])
 next = fobject("src/data/{}".format(random.choice(os.listdir("src/data"))), color=255, pos=[the_game.game_size[1]//2, 0])
+sound = aud.WaveObject.from_wave_file("sounds/over.wav")
 
 frame = 0
 
@@ -26,6 +28,7 @@ while (True):
 
 
             if fob.check_block(the_game):
+                sound.play()
                 x = 0
                 while True:
                     key = cv2.waitKey(1)
